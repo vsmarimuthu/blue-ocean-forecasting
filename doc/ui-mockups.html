@@ -312,18 +312,18 @@ loadC();
 
 /* ---- D · heatmap ---- */
 function hmColor(t,cap){
-  if(t===0) return ['#f0f4f8','#829ab1'];       // grey: nothing forecast
+  if(t===0) return ['#f0f4f8','#829ab1'];
   const pct=t/cap;
-  if(pct>1) return ['#fee2e2','#b91c1c'];       // red: overbooked
-  if(pct<0.5) return ['#fef9c3','#854d0e'];     // yellow: light
-  return ['#d1fae5','#047857'];                 // green: healthy
+  if(pct>1) return ['#fee2e2','#b91c1c'];
+  if(pct<0.5) return ['#fef9c3','#854d0e'];
+  return ['#d1fae5','#047857'];
 }
 function loadD(){
   let h='<tr><th style="text-align:left">Resource</th>'+weeks.map(w=>'<th>'+w+'</th>').join('')+'</tr>';
   Object.entries(dataD).forEach(([n,d])=>{
     h+='<tr><td class="who">'+n+'</td>'+weeks.map((w,wi)=>{
-      const t=d.rows.reduce((s,r)=>s+r.h[wi],0), [bg,fg]=hmColor(t,d.cap[wi]);
-      return '<td class="hm" style="background:'+bg+';color:'+fg+'" onclick="editD(\''+n.replace(/'/g,"\\'")+'\','+wi+')">'+t+'<small>/ '+d.cap[wi]+' h</small></td>';
+      const t=d.rows.reduce((s,r)=>s+r.h[wi],0), col=hmColor(t,d.cap[wi]);
+      return '<td class="hm" style="background:'+col[0]+';color:'+col[1]+'" onclick="editD(\''+n.replace(/'/g,"\\'")+'\','+wi+')">'+t+'<small>/ '+d.cap[wi]+' h</small></td>';
     }).join('')+'</tr>';
   });
   document.getElementById('dGrid').innerHTML=h;
@@ -353,4 +353,10 @@ function loadE(){
   });
   document.getElementById('eGrid').innerHTML=h;
   const done=dataE.filter(r=>r.ok).length;
-  document.getElementById('eProg').textContent=done+' of '+dataE.length+
+  document.getElementById('eProg').textContent=done+' of '+dataE.length+' rows confirmed';
+}
+function acceptAllE(){ dataE.forEach(r=>r.ok=true); loadE(); toast('All proposals accepted ✓'); }
+loadE();
+</script>
+</body>
+</html>
