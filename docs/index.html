@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Blue Ocean — Forecast Entry: 5 Solution Options</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Segoe UI',-apple-system,Roboto,Arial,sans-serif; background:#f6f8fc; color:#243b53; }
+  .hero { background:linear-gradient(120deg,#e0f2fe 0%,#ede9fe 60%,#fce7f3 100%); padding:26px 32px 64px; }
+  .hero h1 { font-size:23px; font-weight:800; color:#1e3a5f; }
+  .hero p { color:#5b7083; font-size:13px; margin-top:6px; }
+  .wrap { max-width:1280px; margin:-38px auto 40px; padding:0 24px; }
+  .tabs { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
+  .tab { flex:1; min-width:190px; padding:13px 16px; border-radius:14px; cursor:pointer; border:2px solid transparent;
+         background:#fff; box-shadow:0 3px 12px rgba(30,58,95,.08); transition:.2s; }
+  .tab:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(30,58,95,.12); }
+  .tab h3 { font-size:13.5px; font-weight:700; color:#243b53; }
+  .tab span { font-size:11px; color:#7b8794; }
+  .tab .hrs { float:right; font-size:10.5px; font-weight:800; padding:2px 8px; border-radius:10px; }
+  .t0 .hrs { background:#e0f2fe; color:#0369a1; } .t1 .hrs { background:#d1fae5; color:#047857; }
+  .t2 .hrs { background:#ede9fe; color:#7c3aed; } .t3 .hrs { background:#ffedd5; color:#c2410c; }
+  .t4 .hrs { background:#fce7f3; color:#be185d; }
+  .tab.active.t0 { border-color:#7dd3fc; } .tab.active.t1 { border-color:#6ee7b7; }
+  .tab.active.t2 { border-color:#c4b5fd; } .tab.active.t3 { border-color:#fdba74; } .tab.active.t4 { border-color:#f9a8d4; }
+  .panel { display:none; animation:fade .25s; } .panel.active { display:block; }
+  @keyframes fade { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+  .card { background:#fff; border-radius:16px; padding:20px 22px; margin-bottom:16px; box-shadow:0 3px 14px rgba(30,58,95,.07); }
+  .pros { display:flex; gap:18px; flex-wrap:wrap; font-size:13px; line-height:1.65; margin-top:10px; }
+  .pros div { flex:1; min-width:240px; }
+  .pros b { display:block; margin-bottom:4px; font-size:11px; text-transform:uppercase; letter-spacing:.8px; color:#7b8794; }
+  .badge { display:inline-block; font-size:10.5px; font-weight:800; padding:3px 12px; border-radius:12px; margin-left:10px; vertical-align:2px; background:#d1fae5; color:#047857; }
+  button { border:none; border-radius:10px; padding:9px 16px; font-size:13px; font-weight:600; cursor:pointer; transition:.15s; }
+  button:hover { filter:brightness(1.05); transform:translateY(-1px); }
+  select { padding:8px 12px; border-radius:10px; font-size:13px; border:1.5px solid #d9e2ec; background:#fff; color:#243b53; }
+  .toast { position:fixed; top:18px; right:18px; background:#059669; color:#fff; padding:12px 20px; border-radius:12px;
+           font-size:14px; font-weight:600; display:none; box-shadow:0 8px 24px rgba(0,0,0,.2); z-index:99; }
+  .note { font-size:12px; margin-top:10px; color:#829ab1; }
+  .toolbar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:14px; }
+  .toolbar label { font-size:11px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:#7b8794; }
+  table { width:100%; border-collapse:separate; border-spacing:0; font-size:13px; background:#fff; border-radius:12px; overflow:hidden; }
+  td { padding:8px; border-bottom:1px solid #f0f4f8; text-align:center; }
+  input[type=number] { width:60px; padding:6px 4px; border-radius:8px; text-align:center; font-size:13px; font-weight:600; }
+  input[type=number]:focus { outline:none; }
+
+  /* ===== A · sky ===== */
+  .pA th { background:#e0f2fe; color:#075985; padding:10px 8px; font-size:12px; font-weight:700; }
+  .pA td.proj { text-align:left; font-weight:700; color:#0c4a6e; white-space:nowrap; }
+  .pA input[type=number] { border:1.5px solid #bae6fd; background:#f0f9ff; color:#075985; }
+  .pA input[type=number]:focus { border-color:#38bdf8; background:#fff; box-shadow:0 0 0 3px rgba(56,189,248,.2); }
+  .pA tr.total td { font-weight:800; background:#f0f9ff; color:#075985; border-top:2px solid #bae6fd; }
+  .pA tr.cap td { background:#fbfdff; color:#829ab1; font-size:12px; }
+  .pA td.over { color:#dc2626; } .pA td.near { color:#d97706; }
+  .pA button.primary { background:#0284c7; color:#fff; }
+  .pA button.ghost { background:#fff; color:#0284c7; border:1.5px dashed #7dd3fc; }
+  .pA .warn { display:none; background:#fef2f2; border:1.5px solid #fecaca; color:#b91c1c; font-size:13px; font-weight:600; padding:10px 14px; border-radius:10px; margin-bottom:12px; }
+  .pA .healed { font-size:12px; color:#0284c7; font-weight:600; }
+
+  /* ===== B · mint ===== */
+  .pB .weekstrip { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+  .pB .wk { padding:8px 16px; border-radius:20px; background:#fff; border:1.5px solid #a7f3d0; font-size:12.5px; font-weight:600; color:#047857; cursor:pointer; }
+  .pB .wk:hover { background:#ecfdf5; }
+  .pB .wk.active { background:#059669; color:#fff; border-color:transparent; }
+  .pB th { background:#ecfdf5; color:#065f46; padding:10px; font-size:12px; }
+  .pB td.who { text-align:left; font-weight:700; color:#065f46; }
+  .pB td.prj { text-align:left; color:#334e68; }
+  .pB input[type=number] { border:1.5px solid #a7f3d0; background:#f0fdf9; color:#047857; }
+  .pB input[type=number]:focus { box-shadow:0 0 0 3px rgba(16,185,129,.2); background:#fff; }
+
+  /* ===== C · lavender canvas ===== */
+  .pC .canvas { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px; }
+  .pC .wkcard { background:linear-gradient(160deg,#faf9ff,#f4f1fd); border:1.5px solid #e9e3fa; border-radius:16px; padding:16px; }
+  .pC .wkcard h4 { font-size:13px; font-weight:800; color:#6d28d9; margin-bottom:2px; }
+  .pC .capline { font-size:11px; color:#8a83a8; margin-bottom:10px; }
+  .pC .bar { height:10px; border-radius:6px; background:#ece7f8; overflow:hidden; margin-bottom:12px; }
+  .pC .fill { height:100%; border-radius:6px; background:linear-gradient(90deg,#6ee7b7,#10b981); transition:.3s; }
+  .pC .fill.warn { background:linear-gradient(90deg,#fcd34d,#f59e0b); }
+  .pC .fill.over { background:linear-gradient(90deg,#fca5a5,#ef4444); }
+  .pC .alloc { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; gap:6px; }
+  .pC .alloc span.nm { font-size:11.5px; flex:1; color:#4c3d78; }
+  .pC .stepper { display:flex; align-items:center; gap:6px; }
+  .pC .stepper button { width:24px; height:24px; padding:0; border-radius:8px; background:#ede9fe; color:#6d28d9; font-size:15px; font-weight:800; line-height:1; }
+  .pC .stepper b { min-width:26px; text-align:center; font-size:13px; color:#3b2f63; }
+  .pC .totline { font-size:11.5px; margin-top:6px; padding-top:8px; border-top:1px dashed #e0d8f5; display:flex; justify-content:space-between; color:#8a83a8; }
+  .pC .actions { display:flex; gap:10px; margin-top:16px; }
+  .pC button.primary { background:#7c3aed; color:#fff; }
+  .pC button.ghost { background:#fff; color:#7c3aed; border:1.5px dashed #c4b5fd; }
+
+  /* ===== D · heatmap ===== */
+  .pD th { background:#fff7ed; color:#9a3412; padding:10px 8px; font-size:12px; }
+  .pD td.who { text-align:left; font-weight:700; color:#7c2d12; white-space:nowrap; }
+  .pD .hm { cursor:pointer; font-weight:700; border-radius:8px; transition:.15s; }
+  .pD .hm:hover { outline:2px solid #fb923c; }
+  .pD .hm small { display:block; font-weight:400; font-size:10px; opacity:.65; }
+  .pD .editor { background:#fff7ed; border:1.5px solid #fed7aa; border-radius:12px; padding:14px 16px; margin-top:14px; }
+  .pD .editor h4 { font-size:13px; color:#9a3412; margin-bottom:10px; }
+  .pD .erow { display:flex; align-items:center; gap:10px; margin-bottom:8px; font-size:13px; }
+  .pD .erow span { flex:1; color:#431407; }
+  .pD input[type=number] { border:1.5px solid #fed7aa; background:#fffbf5; color:#9a3412; }
+  .pD button.primary { background:#ea580c; color:#fff; }
+
+  /* ===== E · confirm ===== */
+  .pE th { background:#f0f4f8; color:#334e68; padding:10px; font-size:12px; }
+  .pE td.prj { text-align:left; color:#243b53; font-weight:600; }
+  .pE .prop { display:inline-flex; gap:4px; }
+  .pE .prop i { font-style:normal; background:#f0f4f8; border-radius:6px; padding:3px 7px; font-size:12px; font-weight:600; color:#486581; min-width:30px; }
+  .pE tr.ok .prop i { background:#d1fae5; color:#047857; }
+  .pE .st { font-size:11px; font-weight:800; padding:3px 10px; border-radius:10px; background:#fef3c7; color:#92400e; }
+  .pE tr.ok .st { background:#d1fae5; color:#047857; }
+  .pE button.acc { background:#10b981; color:#fff; padding:6px 12px; font-size:12px; }
+  .pE button.tw { background:#fff; color:#486581; border:1.5px solid #d9e2ec; padding:6px 12px; font-size:12px; }
+  .pE button.primary { background:#0f766e; color:#fff; }
+  .pE .prog { font-size:12.5px; font-weight:700; color:#0f766e; }
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>Forecast Entry — Five Solution Directions</h1>
+  <p>Blue Ocean Forecasting &amp; Capacity Planning · interactive mockups on sample sandbox data · weeks of Jul 5 – Aug 9, 2026</p>
+</div>
+<div class="wrap">
+  <div class="tabs">
+    <div class="tab active t0" onclick="show(0)"><h3>A · 6-Week Grid <span class="hrs">56–72 h</span></h3><span>Excel replica, one screen</span></div>
+    <div class="tab t1" onclick="show(1)"><h3>B · Enhanced Screen <span class="hrs">28–40 h</span></h3><span>Fix &amp; extend what exists</span></div>
+    <div class="tab t2" onclick="show(2)"><h3>C · Capacity Canvas <span class="hrs">48–64 h</span></h3><span>Fill weekly hour budgets</span></div>
+    <div class="tab t3" onclick="show(3)"><h3>D · Team Heatmap <span class="hrs">56–80 h</span></h3><span>Manager: whole team at once</span></div>
+    <div class="tab t4" onclick="show(4)"><h3>E · Smart Confirm <span class="hrs">40–56 h</span></h3><span>Propose &amp; one-click accept</span></div>
+  </div>
+  <p style="font-size:11.5px;color:#829ab1;margin:-8px 0 16px 4px">Hours are build-only (Apex + LWC + tests, experienced dev). Shared scope — contractor data fixes, retiring the old component, UAT &amp; regression (~24–32 h) — applies once, whichever option is chosen.</p>
+
+  <!-- ============ A ============ -->
+  <div class="panel pA active">
+    <div class="card"><b>A — Project × week grid (custom LWC)<span class="badge">RECOMMENDED</span></b>
+      <div class="pros">
+        <div><b>Pros</b>✓ The Excel grid, inside Salesforce — all 6 weeks on one screen<br>✓ Self-heals missing records at 0 hrs, span-bounded<br>✓ Live capacity row + non-blocking warning<br>✓ Delegate mode covers contractors</div>
+        <div><b>Cons</b>✗ Largest single build<br>✗ New component to own</div>
+      </div></div>
+    <div class="card">
+      <div class="toolbar"><label>Forecasting for</label><select id="aRes" onchange="loadA()"></select>
+        <button class="ghost" onclick="prefillA()">⟵ Prefill from prior week</button>
+        <button class="primary" onclick="toast('Saved — all weeks upserted in one call ✓')">Save all weeks</button>
+        <span class="healed" id="aHealed"></span></div>
+      <div class="warn" id="aWarn"></div>
+      <table id="aGrid"></table>
+      <div class="note">Blue cells are editable. Rows appear automatically for every active assignment — nothing to add manually.</div>
+    </div>
+  </div>
+
+  <!-- ============ B ============ -->
+  <div class="panel pB">
+    <div class="card"><b>B — Enhance the existing Forecast Entry screen</b>
+      <div class="pros">
+        <div><b>Pros</b>✓ Smallest change, fastest to ship<br>✓ Fixes phantom-hours bug + inline editing<br>✓ Missing rows auto-created at 0</div>
+        <div><b>Cons</b>✗ Still one week at a time<br>✗ Doesn't hit "6 weeks in under 5 minutes"</div>
+      </div></div>
+    <div class="card">
+      <div class="weekstrip" id="bStrip"></div>
+      <table id="bGrid"></table>
+      <div class="note">Pill switcher replaces the date picker; each edit saves the row instantly.</div>
+    </div>
+  </div>
+
+  <!-- ============ C ============ -->
+  <div class="panel pC">
+    <div class="card"><b>C — Capacity Canvas: allocate hours into weekly budgets</b>
+      <div class="pros">
+        <div><b>Pros</b>✓ Capacity-first — overbooking visible the instant it happens<br>✓ Soft color feedback (green → amber → red)<br>✓ Tap-friendly, no typing needed</div>
+        <div><b>Cons</b>✗ New mental model vs the familiar spreadsheet<br>✗ Slower than the grid for bulk entry</div>
+      </div></div>
+    <div class="card">
+      <div class="toolbar"><label>Forecasting for</label><select id="cRes" onchange="loadC()"></select></div>
+      <div class="canvas" id="cCanvas"></div>
+      <div class="actions">
+        <button class="ghost" onclick="copyWeekC()">⟳ Copy week 1 across all weeks</button>
+        <button class="primary" onclick="toast('Saved — allocations upserted ✓')">Save allocations</button>
+      </div>
+      <div class="note">Each card is one week. The bar is capacity; every + fills it. Amber at 90%, red when over — saving still allowed.</div>
+    </div>
+  </div>
+
+  <!-- ============ D ============ -->
+  <div class="panel pD">
+    <div class="card"><b>D — Team Heatmap: the manager's cockpit</b>
+      <div class="pros">
+        <div><b>Pros</b>✓ Whole team × 6 weeks on one screen — spot gaps &amp; overloads instantly<br>✓ Click any cell to edit that person's week without leaving the page<br>✓ Doubles as the Objective 4 heatmap later — one component, two uses</div>
+        <div><b>Cons</b>✗ Manager-first; individuals still need A/B/C-style entry for themselves<br>✗ Densest screen — needs training for occasional users</div>
+      </div></div>
+    <div class="card">
+      <table id="dGrid"></table>
+      <div class="editor" id="dEditor" style="display:none"></div>
+      <div class="note">Cell = person's forecast total / capacity for the week. Green = healthy, yellow = light (under-forecast), red = overbooked, grey = no records yet. Click a cell to edit its project breakdown.</div>
+    </div>
+  </div>
+
+  <!-- ============ E ============ -->
+  <div class="panel pE">
+    <div class="card"><b>E — Smart Confirm: propose, review, done</b>
+      <div class="pros">
+        <div><b>Pros</b>✓ Fastest possible entry — system proposes the 6 weeks from your recent pattern, you accept or tweak<br>✓ Perfect for steady managed-services work (most of Blue Ocean's rows never change)<br>✓ One click for the common case; typing only for exceptions</div>
+        <div><b>Cons</b>✗ Proposals are only as good as history — new projects still need manual entry<br>✗ Risk of rubber-stamping without thinking<br>✗ Needs A/B-style fallback editing for corrections</div>
+      </div></div>
+    <div class="card">
+      <div class="toolbar">
+        <span class="prog" id="eProg"></span>
+        <button class="primary" style="margin-left:auto" onclick="acceptAllE()">✓ Accept all proposals</button>
+        <button class="tw" onclick="toast('Saved confirmed rows ✓')">Save</button>
+      </div>
+      <table id="eGrid"></table>
+      <div class="note">Proposed hours = copy of your last populated week (later: 4-week average). Accept to confirm, or Adjust to fine-tune just that project.</div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast">Saved ✓</div>
+
+<script>
+const weeks = ["Jul 5","Jul 12","Jul 19","Jul 26","Aug 2","Aug 9"];
+const seed = {
+  "Priya Nair": { cap:[36,36,36,36,36,36], rows:[
+    {p:"Harborview Pharmacy Managed Services", h:[6,6,6,6,6,6], c:"Likely"},
+    {p:"Caldera Health Data Cloud 360", h:[12,12,12,0,0,0], c:"Likely"},
+    {p:"Brightline Trailers | 3 Months of Support", h:[8,8,8,8,0,0], c:"Possible"}]},
+  "Jordan Fell": { cap:[20,20,20,20,20,20], rows:[
+    {p:"Vertex Vet 12-Month Managed Services", h:[10,10,10,10,10,10], c:"Likely"},
+    {p:"Caldera Health Data Cloud 360", h:[8,4,0,0,0,0], c:"Possible"}]},
+  "Alex Dumont (Contractor)": { cap:[30,30,30,30,30,30], rows:[
+    {p:"Harborview Pharmacy Managed Services", h:[15,15,15,15,15,15], c:"Likely"},
+    {p:"Nordwind Logistics ETL Rebuild", h:[10,10,20,20,10,0], c:"Likely"}]},
+  "Morgan Blake": { cap:[36,36,36,36,36,36], rows:[
+    {p:"Caldera Health Data Cloud 360", h:[20,20,25,25,20,10], c:"Likely"},
+    {p:"Internal | Ops", h:[10,10,14,14,4,0], c:"Likely"}]},
+  "Casey Wu": { cap:[36,36,36,23,36,36], rows:[
+    {p:"Vertex Vet 12-Month Managed Services", h:[12,12,0,0,0,0], c:"Likely"}]}
+};
+const dataA = JSON.parse(JSON.stringify(seed));
+const dataC = JSON.parse(JSON.stringify(seed));
+const dataD = JSON.parse(JSON.stringify(seed));
+let curA="Priya Nair", curC="Priya Nair";
+
+function show(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('active',i===j));
+}
+function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.style.display='block'; setTimeout(()=>t.style.display='none',2200); }
+
+/* ---- A ---- */
+const selA=document.getElementById('aRes');
+["Priya Nair","Jordan Fell","Alex Dumont (Contractor)"].forEach(k=>selA.add(new Option(k)));
+function loadA(){
+  curA=selA.value; const d=dataA[curA];
+  let h='<tr><th style="text-align:left">Project</th>'+weeks.map(w=>'<th>'+w+'</th>').join('')+'<th>Confidence</th><th>6-wk</th></tr>';
+  d.rows.forEach((r,ri)=>{
+    h+='<tr><td class="proj">'+r.p+'</td>'+r.h.map((v,wi)=>'<td><input type="number" min="0" value="'+v+'" oninput="cellA('+ri+','+wi+',this.value)"></td>').join('');
+    h+='<td><select style="padding:5px 8px;font-size:12px"><option'+(r.c==='Likely'?' selected':'')+'>Likely</option><option'+(r.c==='Possible'?' selected':'')+'>Possible</option><option>Unlikely</option></select></td><td id="aR'+ri+'"></td></tr>';
+  });
+  h+='<tr class="total"><td style="text-align:left">Forecast total</td>'+weeks.map((w,i)=>'<td id="aT'+i+'"></td>').join('')+'<td></td><td id="aG"></td></tr>';
+  h+='<tr class="cap"><td style="text-align:left">Capacity (net of PTO / stat)</td>'+d.cap.map(c=>'<td>'+c+'</td>').join('')+'<td></td><td></td></tr>';
+  document.getElementById('aGrid').innerHTML=h;
+  document.getElementById('aHealed').textContent='✦ '+d.rows.length+' assignments · missing weeks self-healed at 0 hrs';
+  recalcA();
+}
+function cellA(r,w,v){ dataA[curA].rows[r].h[w]=+v||0; recalcA(); }
+function recalcA(){
+  const d=dataA[curA]; let over=[];
+  weeks.forEach((wk,i)=>{
+    const t=d.rows.reduce((s,r)=>s+r.h[i],0), c=document.getElementById('aT'+i);
+    c.textContent=t; c.className=t>d.cap[i]?'over':(t>=d.cap[i]*0.9?'near':'');
+    if(t>d.cap[i]) over.push(wk+' ('+t+'h / '+d.cap[i]+'h)');
+  });
+  d.rows.forEach((r,ri)=>document.getElementById('aR'+ri).textContent=r.h.reduce((a,b)=>a+b,0));
+  document.getElementById('aG').textContent=d.rows.reduce((s,r)=>s+r.h.reduce((a,b)=>a+b,0),0);
+  const w=document.getElementById('aWarn');
+  if(over.length){ w.style.display='block'; w.textContent='⚠ Over capacity: '+over.join(', ')+' — saving is still allowed.'; } else w.style.display='none';
+}
+function prefillA(){ dataA[curA].rows.forEach(r=>{for(let w=1;w<6;w++) if(r.h[w]===0) r.h[w]=r.h[w-1];}); loadA(); toast('Prefilled empty weeks ✓'); }
+loadA();
+
+/* ---- B ---- */
+let bWeek=0;
+function loadB(){
+  document.getElementById('bStrip').innerHTML=weeks.map((w,i)=>'<div class="wk'+(i===bWeek?' active':'')+'" onclick="bWeek='+i+';loadB()">'+w+'</div>').join('');
+  let h='<tr><th style="text-align:left">Resource</th><th style="text-align:left">Project</th><th>Capacity</th><th>Forecast</th><th>Actuals</th></tr>';
+  Object.entries(seed).slice(0,3).forEach(([n,d])=>{
+    d.rows.forEach((r,i)=>{
+      h+='<tr>'+(i===0?'<td class="who" rowspan="'+d.rows.length+'">'+n+'</td>':'')+'<td class="prj">'+r.p+'</td>'
+        +(i===0?'<td rowspan="'+d.rows.length+'">'+d.cap[bWeek]+'</td>':'')
+        +'<td><input type="number" min="0" value="'+r.h[bWeek]+'" onchange="toast(\'Row saved ✓\')"></td><td>'+(bWeek<1?r.h[bWeek]:0)+'</td></tr>';
+    });
+  });
+  document.getElementById('bGrid').innerHTML=h;
+}
+loadB();
+
+/* ---- C ---- */
+const selC=document.getElementById('cRes');
+["Priya Nair","Jordan Fell","Alex Dumont (Contractor)"].forEach(k=>selC.add(new Option(k)));
+function loadC(){
+  curC=selC.value; const d=dataC[curC];
+  document.getElementById('cCanvas').innerHTML=weeks.map((wk,wi)=>{
+    const tot=d.rows.reduce((s,r)=>s+r.h[wi],0), pct=Math.min(100,tot/d.cap[wi]*100);
+    const cls=tot>d.cap[wi]?'over':(tot>=d.cap[wi]*0.9?'warn':'');
+    return `<div class="wkcard"><h4>${wk}</h4><div class="capline">${tot} of ${d.cap[wi]} hrs allocated</div>
+      <div class="bar"><div class="fill ${cls}" style="width:${pct}%"></div></div>
+      ${d.rows.map((r,ri)=>`<div class="alloc"><span class="nm">${r.p.split(' ').slice(0,2).join(' ')}</span>
+        <span class="stepper"><button onclick="bump(${ri},${wi},-1)">−</button><b>${r.h[wi]}</b><button onclick="bump(${ri},${wi},1)">+</button></span></div>`).join('')}
+      <div class="totline"><span>headroom</span><b style="color:${tot>d.cap[wi]?'#ef4444':'#059669'}">${d.cap[wi]-tot} h</b></div></div>`;
+  }).join('');
+}
+function bump(ri,wi,dl){ const r=dataC[curC].rows[ri]; r.h[wi]=Math.max(0,r.h[wi]+dl); loadC(); }
+function copyWeekC(){ dataC[curC].rows.forEach(r=>{for(let w=1;w<6;w++) r.h[w]=r.h[0];}); loadC(); toast('Week 1 copied ✓'); }
+loadC();
+
+/* ---- D · heatmap ---- */
+function hmColor(t,cap){
+  if(t===0) return ['#f0f4f8','#829ab1'];       // grey: nothing forecast
+  const pct=t/cap;
+  if(pct>1) return ['#fee2e2','#b91c1c'];       // red: overbooked
+  if(pct<0.5) return ['#fef9c3','#854d0e'];     // yellow: light
+  return ['#d1fae5','#047857'];                 // green: healthy
+}
+function loadD(){
+  let h='<tr><th style="text-align:left">Resource</th>'+weeks.map(w=>'<th>'+w+'</th>').join('')+'</tr>';
+  Object.entries(dataD).forEach(([n,d])=>{
+    h+='<tr><td class="who">'+n+'</td>'+weeks.map((w,wi)=>{
+      const t=d.rows.reduce((s,r)=>s+r.h[wi],0), [bg,fg]=hmColor(t,d.cap[wi]);
+      return '<td class="hm" style="background:'+bg+';color:'+fg+'" onclick="editD(\''+n.replace(/'/g,"\\'")+'\','+wi+')">'+t+'<small>/ '+d.cap[wi]+' h</small></td>';
+    }).join('')+'</tr>';
+  });
+  document.getElementById('dGrid').innerHTML=h;
+}
+function editD(name,wi){
+  const d=dataD[name];
+  document.getElementById('dEditor').style.display='block';
+  document.getElementById('dEditor').innerHTML='<h4>'+name+' — week of '+weeks[wi]+'</h4>'
+    +d.rows.map((r,ri)=>'<div class="erow"><span>'+r.p+'</span><input type="number" min="0" value="'+r.h[wi]+'" onchange="dataD[\''+name.replace(/'/g,"\\'")+'\'].rows['+ri+'].h['+wi+']=+this.value||0;loadD()"></div>').join('')
+    +'<button class="primary" onclick="toast(\'Week saved ✓\');document.getElementById(\'dEditor\').style.display=\'none\'">Save week</button>';
+}
+loadD();
+
+/* ---- E · smart confirm ---- */
+const dataE=[];
+Object.entries(seed).slice(0,3).forEach(([n,d])=>d.rows.forEach(r=>{
+  const last=r.h[0];
+  dataE.push({who:n,p:r.p,prop:weeks.map(()=>last),ok:false});
+}));
+function loadE(){
+  let h='<tr><th style="text-align:left">Resource · Project</th>'+weeks.map(w=>'<th>'+w+'</th>').join('')+'<th>Status</th><th></th></tr>';
+  dataE.forEach((r,i)=>{
+    h+='<tr class="'+(r.ok?'ok':'')+'"><td class="prj">'+r.who+' · '+r.p+'</td>'
+      +'<td colspan="6"><span class="prop">'+r.prop.map(v=>'<i>'+v+'</i>').join('')+'</span></td>'
+      +'<td><span class="st">'+(r.ok?'CONFIRMED':'PROPOSED')+'</span></td>'
+      +'<td style="white-space:nowrap"><button class="acc" onclick="dataE['+i+'].ok=true;loadE()">✓ Accept</button> <button class="tw" onclick="toast(\'Inline adjust would open here\')">Adjust</button></td></tr>';
+  });
+  document.getElementById('eGrid').innerHTML=h;
+  const done=dataE.filter(r=>r.ok).length;
+  document.getElementById('eProg').textContent=done+' of '+dataE.length+' rows confirmed';
+}
+function acceptAllE(){ dataE.forEach(r=>r.ok=true); loadE(); toast('All proposals accepted ✓'); }
+loadE();
+</script>
+</body>
+</html>
