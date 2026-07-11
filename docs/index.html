@@ -137,11 +137,13 @@
     <div class="card">
       <div class="toolbar"><label>Forecasting for</label><select id="aRes" onchange="loadA()"></select>
         <button class="ghost" onclick="prefillA()">⟵ Prefill from prior week</button>
-        <button class="primary" onclick="toast('Saved — all weeks upserted in one call ✓')">Save all weeks</button>
         <span class="healed" id="aHealed"></span></div>
       <div class="warn" id="aWarn"></div>
       <table id="aGrid"></table>
-      <div class="note">Blue cells are editable. Rows appear automatically for every active assignment — nothing to add manually.</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:12px">
+        <div class="note" style="margin-top:0">Blue cells are editable. Rows appear automatically for every active assignment — nothing to add manually.</div>
+        <button class="primary" style="margin-left:auto;padding:10px 22px" onclick="toast('Saved — all weeks upserted in one call ✓')">Save all weeks</button>
+      </div>
     </div>
   </div>
 
@@ -351,10 +353,4 @@ function loadE(){
   });
   document.getElementById('eGrid').innerHTML=h;
   const done=dataE.filter(r=>r.ok).length;
-  document.getElementById('eProg').textContent=done+' of '+dataE.length+' rows confirmed';
-}
-function acceptAllE(){ dataE.forEach(r=>r.ok=true); loadE(); toast('All proposals accepted ✓'); }
-loadE();
-</script>
-</body>
-</html>
+  document.getElementById('eProg').textContent=done+' of '+dataE.length+
